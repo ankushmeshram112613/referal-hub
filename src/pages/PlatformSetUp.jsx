@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import { 
-  Card, 
-  CardContent 
+import {
+  Card,
+  CardContent
 } from '@/components/ui/card';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
-import { 
-  Input 
+import {
+  Input
 } from '@/components/ui/input';
-import { 
-  Button 
+import {
+  Button
 } from '@/components/ui/button';
 import {
   Settings,
@@ -28,20 +28,20 @@ import {
   Bot
 } from 'lucide-react';
 
-export default function Dashboard() {
+export default function platformSetup() {
   const [selectedTab, setSelectedTab] = useState('platformSetup');
 
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left Sidebar */}
       <div className="w-48 bg-slate-50 border-r border-slate-200 flex flex-col">
-        <div className="p-4 font-medium text-blue-600 flex items-center gap-2 border-b border-slate-200">
+        {/* <div className="p-4 font-medium text-blue-600 flex items-center gap-2 border-b border-slate-200">
           <Settings className="w-5 h-5" />
           <span>Platform Setup</span>
-        </div>
-        
+        </div> */}
+
         <div className="flex-1">
-          <SidebarItem icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
+          <SidebarItem icon={<Settings  className="w-5 h-5" />} label="Platform Setup" isActive={true} />
           <SidebarItem icon={<Bot className="w-5 h-5" />} label="AI Agent" />
           <SidebarItem icon={<Layout className="w-5 h-5" />} label="Dashboard" />
           <SidebarItem icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
@@ -49,13 +49,13 @@ export default function Dashboard() {
           <SidebarItem icon={<Users className="w-5 h-5" />} label="Leads" />
           <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
         </div>
-        
+
         <div className="mt-auto border-t border-slate-200">
           <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
           <SidebarItem icon={<HelpCircle className="w-5 h-5" />} label="Help" />
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
@@ -74,7 +74,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        
+
         {/* Main Content */}
         <div className="flex-1 p-6">
           <div className="flex gap-8">
@@ -86,29 +86,29 @@ export default function Dashboard() {
                   To get started with better referrals & rewards, complete your account setup in a few easy steps.
                 </p>
               </div>
-              
+
               <div className="h-px bg-slate-200 my-6"></div>
-              
+
               <div className="space-y-6">
-                <OnboardingStep 
-                  title="Set Up Business Profile" 
-                  status="Not Started" 
+                <OnboardingStep
+                  title="Set Up Business Profile"
+                  status="Not Started"
                 />
-                <OnboardingStep 
-                  title="Sync Your Customer Data" 
-                  status="Not Started" 
+                <OnboardingStep
+                  title="Sync Your Customer Data"
+                  status="Not Started"
                 />
-                <OnboardingStep 
-                  title="Set Up AI Agent Rules" 
-                  status="Not Started" 
+                <OnboardingStep
+                  title="Set Up AI Agent Rules"
+                  status="Not Started"
                 />
-                <OnboardingStep 
-                  title="Set Up First Campaign" 
-                  status="Not Started" 
+                <OnboardingStep
+                  title="Set Up First Campaign"
+                  status="Not Started"
                 />
               </div>
             </div>
-            
+
             {/* Right Side - Business Info Form */}
             <div className="w-2/3">
               <div className="mb-6">
@@ -117,7 +117,7 @@ export default function Dashboard() {
                   Help us tailor the referral experience by adding key details about your business
                 </p>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Business Logo</div>
@@ -127,39 +127,39 @@ export default function Dashboard() {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start justify-between">
                   <div className="w-1/3 font-medium text-slate-700 pt-3">Business Description</div>
                   <div className="w-2/3">
-                    <textarea 
-                      className="w-full px-3 py-2 border border-slate-200 rounded-md text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                    <textarea
+                      className="w-full px-3 py-2 border border-slate-200 rounded-md text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter business description..."
                       rows={4}
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Business Name</div>
                   <div className="w-2/3">
                     <Input placeholder="Enter business name" />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Business Email</div>
                   <div className="w-2/3">
                     <Input placeholder="e.g., robert.fox@myemail.com" />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Business Phone No.</div>
                   <div className="w-2/3">
                     <Input placeholder="Enter phone no." />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Industry</div>
                   <div className="w-2/3">
@@ -176,21 +176,21 @@ export default function Dashboard() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Services</div>
                   <div className="w-2/3">
                     <Input placeholder="Enter services..." />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Products</div>
                   <div className="w-2/3">
                     <Input placeholder="Enter products..." />
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Company Size <span className="text-slate-400 text-sm">(Optional)</span></div>
                   <div className="w-2/3">
@@ -207,7 +207,7 @@ export default function Dashboard() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">City</div>
                   <div className="w-2/3">
@@ -224,7 +224,7 @@ export default function Dashboard() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">State</div>
                   <div className="w-2/3">
@@ -241,14 +241,14 @@ export default function Dashboard() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="w-1/3 font-medium text-slate-700">Zip Code</div>
                   <div className="w-2/3">
                     <Input placeholder="Enter zip code" />
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end mt-6">
                   <Button className="bg-blue-500 hover:bg-blue-600 text-white px-10">
                     Next
@@ -265,9 +265,8 @@ export default function Dashboard() {
 
 function SidebarItem({ icon, label, isActive = false }) {
   return (
-    <div className={`px-4 py-3 flex items-center gap-2 text-sm font-medium cursor-pointer ${
-      isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
-    }`}>
+    <div className={`px-4 py-3 flex items-center gap-2 text-sm font-medium cursor-pointer ${isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
+      }`}>
       {icon}
       <span>{label}</span>
     </div>

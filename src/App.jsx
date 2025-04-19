@@ -2,7 +2,7 @@ import './App.css'
 import { Route, Routes } from 'react-router'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
+import PlatformSetup from './pages/PlatformSetup'
 
 function App() { 
   return (
@@ -10,7 +10,7 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/platformSetup" element={<PlatformSetup />} />
     </Routes>
   )
 }
