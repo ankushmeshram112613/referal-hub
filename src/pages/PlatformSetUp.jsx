@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent
@@ -28,7 +28,8 @@ import {
   Bot,
   Upload,
   CloudUpload,
-  Plus
+  Plus,
+  X
 } from 'lucide-react';
 import { Check } from 'lucide-react';
 
@@ -40,6 +41,80 @@ export default function PlatformSetup() {
     'aiAgentRules': 'not-started',
     'firstCampaign': 'not-started'
   });
+  
+  // Tour state
+  const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  
+  const tourSteps = [
+    {
+      target: "platform-setup",
+      title: "Platform Setup",
+      content: "This is where you'll configure your account settings and complete the onboarding process.",
+      position: "right"
+    },
+    {
+      target: "ai-agent",
+      title: "AI Agent",
+      content: "Manage your AI assistant settings and customize how it interacts with your customers.",
+      position: "right"
+    },
+    {
+      target: "dashboard",
+      title: "Dashboard",
+      content: "View analytics, performance metrics, and track your referral campaign success.",
+      position: "right"
+    },
+    {
+      target: "campaign",
+      title: "Campaign",
+      content: "Create and manage your referral campaigns, set rewards, and track progress.",
+      position: "right"
+    },
+    {
+      target: "promoters",
+      title: "Promoters",
+      content: "View and manage users who are promoting your business through referrals.",
+      position: "right"
+    },
+    {
+      target: "leads",
+      title: "Leads",
+      content: "Track potential customers who have been referred to your business.",
+      position: "right"
+    },
+    {
+      target: "payouts",
+      title: "Payouts",
+      content: "Manage rewards and payments to your promoters for successful referrals.",
+      position: "right"
+    }
+  ];
+  
+  // Start tour automatically on first load
+  useEffect(() => {
+    // Always show tour on page load/refresh
+    setShowTour(true);
+    setTourStep(0);
+  }, []);
+  
+  const handleNextTourStep = () => {
+    if (tourStep < tourSteps.length - 1) {
+      setTourStep(tourStep + 1);
+    } else {
+      setShowTour(false);
+    }
+  };
+  
+  const handlePrevTourStep = () => {
+    if (tourStep > 0) {
+      setTourStep(tourStep - 1);
+    }
+  };
+  
+  const handleCloseTour = () => {
+    setShowTour(false);
+  };
 
   const handleStepClick = (stepId) => {
     if (stepsStatus[stepId] === 'not-started') {
@@ -104,27 +179,32 @@ export default function PlatformSetup() {
     <div className="flex min-h-screen bg-white">
       {/* Left Sidebar */}
       <div className="w-64 bg-slate-50 border-r border-slate-200 flex flex-col">
-        {/* <div className="p-4 text-sm text-blue-600 flex items-center gap-2 border-b border-slate-200">
-          <Settings className="w-5 h-5" />
-          <span>Platform Setup</span>
-        </div> */}
-
         <div className="flex-1">
-          <SidebarItem icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
-          <SidebarItem icon={<Bot className="w-5 h-5" />} label="AI Agent" />
-          <SidebarItem icon={<Layout className="w-5 h-5" />} label="Dashboard" />
-          <SidebarItem icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
-          <SidebarItem icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
-          <SidebarItem icon={<Users className="w-5 h-5" />} label="Leads" />
-          <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
+          <SidebarItem id="platform-setup" icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
+          <SidebarItem id="ai-agent" icon={<Bot className="w-5 h-5" />} label="AI Agent" />
+          <SidebarItem id="dashboard" icon={<Layout className="w-5 h-5" />} label="Dashboard" />
+          <SidebarItem id="campaign" icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
+          <SidebarItem id="promoters" icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
+          <SidebarItem id="leads" icon={<Users className="w-5 h-5" />} label="Leads" />
+          <SidebarItem id="payouts" icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
         </div>
 
         <div className="mt-auto border-t border-slate-200">
           <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
-          <SidebarItem icon={<HelpCircle className="w-5 h-5" />} label="Help" />
+          <SidebarItem icon={<HelpCircle className="w-5 h-5" />} label="Help" onClick={() => setShowTour(true)} />
         </div>
       </div>
-
+      
+      {/* Tour Popup */}
+      {showTour && (
+        <TourPopup 
+          step={tourSteps[tourStep]}
+          onNext={tourStep < tourSteps.length - 1 ? handleNextTourStep : () => setShowTour(false)}
+          onPrev={tourStep > 0 ? handlePrevTourStep : null}
+          onClose={handleCloseTour}
+        />
+      )}
+      
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
@@ -193,10 +273,14 @@ export default function PlatformSetup() {
   );
 }
 
-function SidebarItem({ icon, label, isActive = false }) {
+function SidebarItem({ icon, label, isActive = false, id }) {
   return (
-    <div className={`px-4 py-3 flex items-center gap-2 text-sm text-sm cursor-pointer ${isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
-      }`}>
+    <div 
+      id={id}
+      className={`px-4 py-3 flex items-center gap-2 text-sm cursor-pointer relative ${
+        isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
+      }`}
+    >
       {icon}
       <span>{label}</span>
     </div>
@@ -432,7 +516,8 @@ function CustomerDataForm({ onSubmit }) {
           Next
         </Button>
       </div>
-    </>)
+    </>
+  );
 }
 
 function AIAgentRulesForm({ onSubmit }) {
@@ -848,5 +933,87 @@ function CampaignSetupForm({ onSubmit }) {
       </button>
     </div>
     </>
+  );
+}
+
+// Add this new component for the tour popup
+function TourPopup({ step, onNext, onPrev, onClose }) {
+  const { target, title, content, position } = step;
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  
+  useEffect(() => {
+    // Find the target element and calculate position
+    const targetElement = document.getElementById(target);
+    if (targetElement) {
+      const rect = targetElement.getBoundingClientRect();
+      setPopupPosition({
+        top: rect.top,
+        left: rect.right + 10 // Position 10px to the right of the menu item
+      });
+    }
+  }, [target]);
+  
+  return (
+    <div className="fixed inset-0 z-50">
+      {/* Semi-transparent gray overlay */}
+      <div className="absolute inset-0 bg-gray-500/70"></div>
+      
+      {/* Highlight only the active menu item */}
+      {target && (
+        <div 
+          className="absolute z-20"
+          style={{
+            position: 'absolute',
+            left: document.getElementById(target)?.getBoundingClientRect().left || 0,
+            top: document.getElementById(target)?.getBoundingClientRect().top || 0,
+            width: document.getElementById(target)?.offsetWidth || 0,
+            height: document.getElementById(target)?.offsetHeight || 0,
+            backgroundColor: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 1rem',
+            gap: '0.5rem'
+          }}
+        >
+          {/* Clone the content of the target element */}
+          {document.getElementById(target)?.innerHTML && (
+            <div dangerouslySetInnerHTML={{ __html: document.getElementById(target).innerHTML }} />
+          )}
+        </div>
+      )}
+      
+      {/* Tour popup */}
+      <div 
+        className="absolute z-50 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-blue-200"
+        style={{ 
+          top: `${popupPosition.top}px`, 
+          left: `${popupPosition.left}px`,
+          transform: 'translateY(-25%)'
+        }}
+      >
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="font-medium text-blue-600">{title}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X size={18} />
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">{content}</p>
+        <div className="flex justify-between">
+          <button 
+            onClick={onPrev}
+            className="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!onPrev}
+          >
+            Previous
+          </button>
+          <button 
+            onClick={onNext}
+            className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md"
+          >
+            {onPrev ? "Next" : "Finish"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
