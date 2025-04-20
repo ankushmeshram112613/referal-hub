@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Updated import from react-router-dom instead of react-router
 import {
   Card,
   CardContent
@@ -16,22 +17,23 @@ import {
 import {
   Button
 } from '@/components/ui/button';
-import {
-  Settings,
-  HelpCircle,
-  Layout,
-  Users,
-  UserPlus,
-  FileText,
+import { 
+  Settings, 
+  Bot, 
+  Layout, 
+  MessagesSquare, 
+  UserPlus, 
+  Users, 
   CreditCard,
-  MessagesSquare,
-  Bot,
-  Upload,
-  CloudUpload,
-  Plus,
-  X
+  HelpCircle,
+  FileText,
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  UploadCloud,  // Add this for the CustomerDataForm
+  Plus,         // Add this for the CampaignSetupForm
 } from 'lucide-react';
-import { Check } from 'lucide-react';
 
 export default function PlatformSetup() {
   const [activeStep, setActiveStep] = useState('businessProfile');
@@ -41,11 +43,11 @@ export default function PlatformSetup() {
     'aiAgentRules': 'not-started',
     'firstCampaign': 'not-started'
   });
-  
+
   // Tour state
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
-  
+
   const tourSteps = [
     {
       target: "platform-setup",
@@ -90,14 +92,14 @@ export default function PlatformSetup() {
       position: "right"
     }
   ];
-  
+
   // Start tour automatically on first load
   useEffect(() => {
     // Always show tour on page load/refresh
     setShowTour(true);
     setTourStep(0);
   }, []);
-  
+
   const handleNextTourStep = () => {
     if (tourStep < tourSteps.length - 1) {
       setTourStep(tourStep + 1);
@@ -105,13 +107,13 @@ export default function PlatformSetup() {
       setShowTour(false);
     }
   };
-  
+
   const handlePrevTourStep = () => {
     if (tourStep > 0) {
       setTourStep(tourStep - 1);
     }
   };
-  
+
   const handleCloseTour = () => {
     setShowTour(false);
   };
@@ -180,31 +182,47 @@ export default function PlatformSetup() {
       {/* Left Sidebar */}
       <div className="w-64 bg-slate-50 border-r border-slate-200 flex flex-col">
         <div className="flex-1">
-          <SidebarItem id="platform-setup" icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
-          <SidebarItem id="ai-agent" icon={<Bot className="w-5 h-5" />} label="AI Agent" />
-          <SidebarItem id="dashboard" icon={<Layout className="w-5 h-5" />} label="Dashboard" />
-          <SidebarItem id="campaign" icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
-          <SidebarItem id="promoters" icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
-          <SidebarItem id="leads" icon={<Users className="w-5 h-5" />} label="Leads" />
-          <SidebarItem id="payouts" icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
+          <Link to="/platformSetup">
+            <SidebarItem id="platform-setup" icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
+          </Link>
+          <Link to="/aiagent">
+            <SidebarItem id="ai-agent" icon={<Bot className="w-5 h-5" />} label="AI Agent" />
+          </Link>
+          <Link to="/dashboard">
+            <SidebarItem id="dashboard" icon={<Layout className="w-5 h-5" />} label="Dashboard" />
+          </Link>
+          <Link to="/campaign">
+            <SidebarItem id="campaign" icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
+          </Link>
+          <Link to="/promoters">
+            <SidebarItem id="promoters" icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
+          </Link>
+          <Link to="/leads">
+            <SidebarItem id="leads" icon={<Users className="w-5 h-5" />} label="Leads" />
+          </Link>
+          <Link to="/payouts">
+            <SidebarItem id="payouts" icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
+          </Link>
         </div>
 
         <div className="mt-auto border-t border-slate-200">
-          <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
+          <Link to="/settings">
+            <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
+          </Link>
           <SidebarItem icon={<HelpCircle className="w-5 h-5" />} label="Help" onClick={() => setShowTour(true)} />
         </div>
       </div>
-      
+
       {/* Tour Popup */}
       {showTour && (
-        <TourPopup 
+        <TourPopup
           step={tourSteps[tourStep]}
           onNext={tourStep < tourSteps.length - 1 ? handleNextTourStep : () => setShowTour(false)}
           onPrev={tourStep > 0 ? handlePrevTourStep : null}
           onClose={handleCloseTour}
         />
       )}
-      
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
@@ -275,11 +293,10 @@ export default function PlatformSetup() {
 
 function SidebarItem({ icon, label, isActive = false, id }) {
   return (
-    <div 
+    <div
       id={id}
-      className={`px-4 py-3 flex items-center gap-2 text-sm cursor-pointer relative ${
-        isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
-      }`}
+      className={`px-4 py-3 flex items-center gap-2 text-sm cursor-pointer relative ${isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'
+        }`}
     >
       {icon}
       <span>{label}</span>
@@ -499,7 +516,7 @@ function CustomerDataForm({ onSubmit }) {
           onDrop={handleDrop}
         >
           <div className="flex justify-center mb-4">
-            <CloudUpload className="text-blue-600" size={48} />
+            <UploadCloud className="text-blue-600" size={48} />
           </div>
           <p className="text-gray-800 mb-4">Drag and drop files here</p>
           <p className="text-gray-500 mb-4">or</p>
@@ -523,107 +540,107 @@ function CustomerDataForm({ onSubmit }) {
 function AIAgentRulesForm({ onSubmit }) {
   const [autoOfferHelp, setAutoOfferHelp] = useState(true);
   const [userInitiatedOnly, setUserInitiatedOnly] = useState(false);
-  
+
   return (
     <>
       <div className="p-10 w-10/12">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-12">Set Up AI Agent Rules</h1>
-      
-      {/* Tone of Communication */}
-      <div className="mb-8">
-        <label className="block text-gray-700 text-sm mb-2">
-          Tone of Communication
-        </label>
-        <div className="relative">
-          <select 
-            className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500"
-            defaultValue=""
-          >
-            <option value="" disabled>Select</option>
-            <option value="friendly">Friendly</option>
-            <option value="professional">Professional</option>
-            <option value="casual">Casual</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-            </svg>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-12">Set Up AI Agent Rules</h1>
+
+        {/* Tone of Communication */}
+        <div className="mb-8">
+          <label className="block text-gray-700 text-sm mb-2">
+            Tone of Communication
+          </label>
+          <div className="relative">
+            <select
+              className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500"
+              defaultValue=""
+            >
+              <option value="" disabled>Select</option>
+              <option value="friendly">Friendly</option>
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Response Style */}
-      <div className="mb-8">
-        <label className="block text-gray-700 text-sm mb-2">
-          Response Style
-        </label>
-        <div className="relative">
-          <select 
-            className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500"
-            defaultValue=""
-          >
-            <option value="" disabled>Select</option>
-            <option value="concise">Concise</option>
-            <option value="detailed">Detailed</option>
-            <option value="conversational">Conversational</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-            </svg>
+
+        {/* Response Style */}
+        <div className="mb-8">
+          <label className="block text-gray-700 text-sm mb-2">
+            Response Style
+          </label>
+          <div className="relative">
+            <select
+              className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500"
+              defaultValue=""
+            >
+              <option value="" disabled>Select</option>
+              <option value="concise">Concise</option>
+              <option value="detailed">Detailed</option>
+              <option value="conversational">Conversational</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Auto-offer help */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-medium text-gray-700">Auto-offer help</h3>
-            <p className="text-gray-500 text-sm">
-              AI pops up suggestions automatically when user lands on a page.
-            </p>
+
+        {/* Auto-offer help */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700">Auto-offer help</h3>
+              <p className="text-gray-500 text-sm">
+                AI pops up suggestions automatically when user lands on a page.
+              </p>
+            </div>
+            <button
+              className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-none ${autoOfferHelp ? 'bg-blue-500' : 'bg-gray-300'}`}
+              onClick={() => setAutoOfferHelp(!autoOfferHelp)}
+            >
+              <span
+                className={`block w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ease-in-out ${autoOfferHelp ? 'translate-x-6' : ''}`}
+              />
+            </button>
           </div>
-          <button 
-            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-none ${autoOfferHelp ? 'bg-blue-500' : 'bg-gray-300'}`}
-            onClick={() => setAutoOfferHelp(!autoOfferHelp)}
+        </div>
+
+        {/* User-initiated only */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700">User-initiated only</h3>
+              <p className="text-gray-500 text-sm">
+                AI only responds when clicked or messaged.
+              </p>
+            </div>
+            <button
+              className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-none ${userInitiatedOnly ? 'bg-blue-500' : 'bg-gray-300'}`}
+              onClick={() => setUserInitiatedOnly(!userInitiatedOnly)}
+            >
+              <span
+                className={`block w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ease-in-out ${userInitiatedOnly ? 'translate-x-6' : ''}`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div className='flex justify-center'>
+          <Button
+            onClick={onSubmit}
+            className="w-[45%] text-white mx-auto font-medium py-2 bg-gradient-to-r mt-2 from-blue-600 to-blue-200 hover:from-blue-600 hover:to-blue-300"
           >
-            <span 
-              className={`block w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ease-in-out ${autoOfferHelp ? 'translate-x-6' : ''}`}
-            />
-          </button>
+            Next
+          </Button>
         </div>
       </div>
-      
-      {/* User-initiated only */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-medium text-gray-700">User-initiated only</h3>
-            <p className="text-gray-500 text-sm">
-              AI only responds when clicked or messaged.
-            </p>
-          </div>
-          <button 
-            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-none ${userInitiatedOnly ? 'bg-blue-500' : 'bg-gray-300'}`}
-            onClick={() => setUserInitiatedOnly(!userInitiatedOnly)}
-          >
-            <span 
-              className={`block w-4 h-4 bg-white rounded-full transform transition-transform duration-300 ease-in-out ${userInitiatedOnly ? 'translate-x-6' : ''}`}
-            />
-          </button>
-        </div>
-      </div>
-      
-      <div className='flex justify-center'>
-        <Button
-          onClick={onSubmit}
-          className="w-[45%] text-white mx-auto font-medium py-2 bg-gradient-to-r mt-2 from-blue-600 to-blue-200 hover:from-blue-600 hover:to-blue-300"
-        >
-          Next
-        </Button>
-      </div>
-    </div>
     </>
   );
 }
@@ -633,305 +650,305 @@ function CampaignSetupForm({ onSubmit }) {
   const [leadsActionType, setLeadsActionType] = useState('SMS');
   return (
     <>
-       <div className="p-6 max-w-3xl">
-      <h1 className="text-xl font-semibold text-gray-800">Create New Campaign</h1>
-      <p className="text-gray-500 text-sm mb-6">Create a new referral campaign in just few steps.</p>
-      
-      {/* Campaign Name */}
-      <div className="mb-6">
-        <label className="block text-gray-700 mb-2">Campaign Name</label>
-        <input 
-          type="text" 
-          className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-          placeholder="e.g., Summer Referral Special"
-        />
-      </div>
-      
-      {/* Promoter Settings */}
-      <div className="mb-8">
-        <h2 className="text-gray-700 font-medium mb-4">Promoter Settings</h2>
-        
-        <div className="flex gap-4 mb-4">
-          <div className="w-1/2">
+      <div className="p-6 max-w-3xl">
+        <h1 className="text-xl font-semibold text-gray-800">Create New Campaign</h1>
+        <p className="text-gray-500 text-sm mb-6">Create a new referral campaign in just few steps.</p>
+
+        {/* Campaign Name */}
+        <div className="mb-6">
+          <label className="block text-gray-700 mb-2">Campaign Name</label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="e.g., Summer Referral Special"
+          />
+        </div>
+
+        {/* Promoter Settings */}
+        <div className="mb-8">
+          <h2 className="text-gray-700 font-medium mb-4">Promoter Settings</h2>
+
+          <div className="flex gap-4 mb-4">
+            <div className="w-1/2">
+              <label className="block text-gray-700 text-sm mb-2">
+                Reward Type<span className="text-red-500">*</span>
+              </label>
+              <div className="bg-blue-50 border border-blue-100 px-3 py-2 rounded-md text-blue-600 text-center">
+                Points
+                <div className="text-xs text-blue-500">(1:1 is equivalent to 10 points)</div>
+              </div>
+            </div>
+
+            <div className="w-1/2">
+              <label className="block text-gray-700 text-sm mb-2">
+                Reward Value<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="e.g., 200 points"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
             <label className="block text-gray-700 text-sm mb-2">
-              Reward Type<span className="text-red-500">*</span>
+              Promoter Message<span className="text-red-500">*</span>
             </label>
-            <div className="bg-blue-50 border border-blue-100 px-3 py-2 rounded-md text-blue-600 text-center">
-              Points
-              <div className="text-xs text-blue-500">(1:1 is equivalent to 10 points)</div>
+            <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              rows="3"
+              placeholder="e.g., Hey! Share this with your friends and get $20 for each successful signup!"
+            ></textarea>
+          </div>
+        </div>
+
+        {/* Follow-Up Strategy Section for Promoters */}
+        <div className="bg-blue-50 p-4 rounded-lg mb-6">
+          <div className="mb-4">
+            <h3 className="text-gray-700 font-medium mb-2">
+              Follow-Up Strategy<span className="text-red-500">*</span>
+            </h3>
+
+            <div className="flex items-center justify-center mb-4">
+              <div className="text-center px-4">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-green-200">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-green-500"><path d="M22 2L2 22M22 22L2 2"></path></svg>
+                </div>
+                <span className="text-xs text-gray-600">SMS</span>
+              </div>
+
+              <div className="h-px bg-gray-300 flex-1"></div>
+
+              <div className="text-center px-4">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-blue-200">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <span className="text-xs text-gray-600">Wait 3 days</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Action Type</label>
+                <div className="flex gap-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="promoterActionType"
+                      value="Email"
+                      checked={promoterActionType === 'Email'}
+                      onChange={() => setPromoterActionType('Email')}
+                    />
+                    <span className="ml-2">Email</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="promoterActionType"
+                      value="SMS"
+                      checked={promoterActionType === 'SMS'}
+                      onChange={() => setPromoterActionType('SMS')}
+                    />
+                    <span className="ml-2">SMS</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="promoterActionType"
+                      value="Wait Duration"
+                      checked={promoterActionType === 'Wait Duration'}
+                      onChange={() => setPromoterActionType('Wait Duration')}
+                    />
+                    <span className="ml-2">Wait Duration</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Phone Number</label>
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
+                  <option>Select</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Follow-Up Message</label>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  rows="2"
+                  placeholder="Enter message..."
+                ></textarea>
+              </div>
+
+              <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
+                <Plus size={16} />
+                <span>Add Action</span>
+              </button>
             </div>
           </div>
-          
-          <div className="w-1/2">
+        </div>
+
+        {/* Leads Settings */}
+        <div className="mb-8">
+          <h2 className="text-gray-700 font-medium mb-4">Leads Settings</h2>
+
+          <div className="flex gap-4 mb-4">
+            <div className="w-1/2">
+              <label className="block text-gray-700 text-sm mb-2">
+                Reward Type<span className="text-red-500">*</span>
+              </label>
+              <div className="bg-blue-50 border border-blue-100 px-3 py-2 rounded-md text-blue-600 text-center">
+                Discount
+              </div>
+            </div>
+
+            <div className="w-1/2">
+              <label className="block text-gray-700 text-sm mb-2">
+                Reward Value<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="e.g., 20%"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
             <label className="block text-gray-700 text-sm mb-2">
-              Reward Value<span className="text-red-500">*</span>
+              Referred Message<span className="text-red-500">*</span>
             </label>
-            <input 
-              type="text" 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-              placeholder="e.g., 200 points"
-            />
+            <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              rows="3"
+              placeholder="e.g., You've been invited! Sign up now and get 15% off your first order."
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <label className="text-gray-700 text-sm">Form Fields</label>
+              <svg className="text-gray-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div className="flex gap-4">
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox" defaultChecked={true} />
+                <span className="ml-2 text-sm">Full Name</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox" defaultChecked={true} />
+                <span className="ml-2 text-sm">Email Address</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox" />
+                <span className="ml-2 text-sm">Phone Number</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox" defaultChecked={true} />
+                <span className="ml-2 text-sm">Agree</span>
+              </label>
+            </div>
           </div>
         </div>
-        
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm mb-2">
-            Promoter Message<span className="text-red-500">*</span>
-          </label>
-          <textarea 
-            className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-            rows="3"
-            placeholder="e.g., Hey! Share this with your friends and get $20 for each successful signup!"
-          ></textarea>
+
+        {/* Follow-Up Strategy Section for Leads */}
+        <div className="bg-blue-50 p-4 rounded-lg mb-8">
+          <div className="mb-4">
+            <h3 className="text-gray-700 font-medium mb-2">
+              Follow-Up Strategy<span className="text-red-500">*</span>
+            </h3>
+
+            <div className="flex items-center justify-center mb-4">
+              <div className="text-center px-4">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-green-200">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-green-500"><path d="M22 2L2 22M22 22L2 2"></path></svg>
+                </div>
+                <span className="text-xs text-gray-600">SMS</span>
+              </div>
+
+              <div className="h-px bg-gray-300 flex-1"></div>
+
+              <div className="text-center px-4">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-blue-200">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <span className="text-xs text-gray-600">Wait 3 days</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Action Type</label>
+                <div className="flex gap-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="leadsActionType"
+                      value="Email"
+                      checked={leadsActionType === 'Email'}
+                      onChange={() => setLeadsActionType('Email')}
+                    />
+                    <span className="ml-2">Email</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="leadsActionType"
+                      value="SMS"
+                      checked={leadsActionType === 'SMS'}
+                      onChange={() => setLeadsActionType('SMS')}
+                    />
+                    <span className="ml-2">SMS</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      className="form-radio"
+                      name="leadsActionType"
+                      value="Wait Duration"
+                      checked={leadsActionType === 'Wait Duration'}
+                      onChange={() => setLeadsActionType('Wait Duration')}
+                    />
+                    <span className="ml-2">Wait Duration</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Phone Number</label>
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
+                  <option>Select</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm mb-2">Follow-Up Message</label>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  rows="2"
+                  placeholder="Enter message..."
+                ></textarea>
+              </div>
+
+              <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
+                <Plus size={16} />
+                <span>Add Action</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Launch Button */}
+        <button onClick={onSubmit} className="w-full bg-blue-500 text-white rounded-md py-3 font-medium">
+          Launch
+        </button>
       </div>
-      
-      {/* Follow-Up Strategy Section for Promoters */}
-      <div className="bg-blue-50 p-4 rounded-lg mb-6">
-        <div className="mb-4">
-          <h3 className="text-gray-700 font-medium mb-2">
-            Follow-Up Strategy<span className="text-red-500">*</span>
-          </h3>
-          
-          <div className="flex items-center justify-center mb-4">
-            <div className="text-center px-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-green-200">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-green-500"><path d="M22 2L2 22M22 22L2 2"></path></svg>
-              </div>
-              <span className="text-xs text-gray-600">SMS</span>
-            </div>
-            
-            <div className="h-px bg-gray-300 flex-1"></div>
-            
-            <div className="text-center px-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-blue-200">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              </div>
-              <span className="text-xs text-gray-600">Wait 3 days</span>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Action Type</label>
-              <div className="flex gap-4">
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="promoterActionType" 
-                    value="Email" 
-                    checked={promoterActionType === 'Email'} 
-                    onChange={() => setPromoterActionType('Email')}
-                  />
-                  <span className="ml-2">Email</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="promoterActionType" 
-                    value="SMS" 
-                    checked={promoterActionType === 'SMS'} 
-                    onChange={() => setPromoterActionType('SMS')}
-                  />
-                  <span className="ml-2">SMS</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="promoterActionType" 
-                    value="Wait Duration" 
-                    checked={promoterActionType === 'Wait Duration'} 
-                    onChange={() => setPromoterActionType('Wait Duration')}
-                  />
-                  <span className="ml-2">Wait Duration</span>
-                </label>
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Phone Number</label>
-              <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
-                <option>Select</option>
-              </select>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Follow-Up Message</label>
-              <textarea 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-                rows="2"
-                placeholder="Enter message..."
-              ></textarea>
-            </div>
-            
-            <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
-              <Plus size={16} />
-              <span>Add Action</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Leads Settings */}
-      <div className="mb-8">
-        <h2 className="text-gray-700 font-medium mb-4">Leads Settings</h2>
-        
-        <div className="flex gap-4 mb-4">
-          <div className="w-1/2">
-            <label className="block text-gray-700 text-sm mb-2">
-              Reward Type<span className="text-red-500">*</span>
-            </label>
-            <div className="bg-blue-50 border border-blue-100 px-3 py-2 rounded-md text-blue-600 text-center">
-              Discount
-            </div>
-          </div>
-          
-          <div className="w-1/2">
-            <label className="block text-gray-700 text-sm mb-2">
-              Reward Value<span className="text-red-500">*</span>
-            </label>
-            <input 
-              type="text" 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-              placeholder="e.g., 20%"
-            />
-          </div>
-        </div>
-        
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm mb-2">
-            Referred Message<span className="text-red-500">*</span>
-          </label>
-          <textarea 
-            className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-            rows="3"
-            placeholder="e.g., You've been invited! Sign up now and get 15% off your first order."
-          ></textarea>
-        </div>
-        
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <label className="text-gray-700 text-sm">Form Fields</label>
-            <svg className="text-gray-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          </div>
-          <div className="flex gap-4">
-            <label className="inline-flex items-center">
-              <input type="checkbox" className="form-checkbox" defaultChecked={true} />
-              <span className="ml-2 text-sm">Full Name</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input type="checkbox" className="form-checkbox" defaultChecked={true} />
-              <span className="ml-2 text-sm">Email Address</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input type="checkbox" className="form-checkbox" />
-              <span className="ml-2 text-sm">Phone Number</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input type="checkbox" className="form-checkbox" defaultChecked={true} />
-              <span className="ml-2 text-sm">Agree</span>
-            </label>
-          </div>
-        </div>
-      </div>
-      
-      {/* Follow-Up Strategy Section for Leads */}
-      <div className="bg-blue-50 p-4 rounded-lg mb-8">
-        <div className="mb-4">
-          <h3 className="text-gray-700 font-medium mb-2">
-            Follow-Up Strategy<span className="text-red-500">*</span>
-          </h3>
-          
-          <div className="flex items-center justify-center mb-4">
-            <div className="text-center px-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-green-200">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-green-500"><path d="M22 2L2 22M22 22L2 2"></path></svg>
-              </div>
-              <span className="text-xs text-gray-600">SMS</span>
-            </div>
-            
-            <div className="h-px bg-gray-300 flex-1"></div>
-            
-            <div className="text-center px-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1 border border-blue-200">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              </div>
-              <span className="text-xs text-gray-600">Wait 3 days</span>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Action Type</label>
-              <div className="flex gap-4">
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="leadsActionType" 
-                    value="Email" 
-                    checked={leadsActionType === 'Email'} 
-                    onChange={() => setLeadsActionType('Email')}
-                  />
-                  <span className="ml-2">Email</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="leadsActionType" 
-                    value="SMS" 
-                    checked={leadsActionType === 'SMS'} 
-                    onChange={() => setLeadsActionType('SMS')}
-                  />
-                  <span className="ml-2">SMS</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input 
-                    type="radio" 
-                    className="form-radio" 
-                    name="leadsActionType" 
-                    value="Wait Duration" 
-                    checked={leadsActionType === 'Wait Duration'} 
-                    onChange={() => setLeadsActionType('Wait Duration')}
-                  />
-                  <span className="ml-2">Wait Duration</span>
-                </label>
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Phone Number</label>
-              <select className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white">
-                <option>Select</option>
-              </select>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm mb-2">Follow-Up Message</label>
-              <textarea 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-                rows="2"
-                placeholder="Enter message..."
-              ></textarea>
-            </div>
-            
-            <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
-              <Plus size={16} />
-              <span>Add Action</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Launch Button */}
-      <button onClick={onSubmit} className="w-full bg-blue-500 text-white rounded-md py-3 font-medium">
-        Launch
-      </button>
-    </div>
     </>
   );
 }
@@ -940,7 +957,7 @@ function CampaignSetupForm({ onSubmit }) {
 function TourPopup({ step, onNext, onPrev, onClose }) {
   const { target, title, content, position } = step;
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  
+
   useEffect(() => {
     // Find the target element and calculate position
     const targetElement = document.getElementById(target);
@@ -952,15 +969,15 @@ function TourPopup({ step, onNext, onPrev, onClose }) {
       });
     }
   }, [target]);
-  
+
   return (
     <div className="fixed inset-0 z-50">
       {/* Semi-transparent gray overlay */}
       <div className="absolute inset-0 bg-gray-500/70"></div>
-      
+
       {/* Highlight only the active menu item */}
       {target && (
-        <div 
+        <div
           className="absolute z-20"
           style={{
             position: 'absolute',
@@ -981,37 +998,48 @@ function TourPopup({ step, onNext, onPrev, onClose }) {
           )}
         </div>
       )}
-      
+
       {/* Tour popup */}
-      <div 
+      <div
         className="absolute z-50 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-blue-200"
-        style={{ 
-          top: `${popupPosition.top}px`, 
+        style={{
+          top: `${popupPosition.top}px`,
           left: `${popupPosition.left}px`,
           transform: 'translateY(-25%)'
         }}
       >
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-medium text-blue-600">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X size={18} />
-          </button>
-        </div>
-        <p className="text-sm text-gray-600 mb-4">{content}</p>
-        <div className="flex justify-between">
-          <button 
-            onClick={onPrev}
-            className="px-3 py-1 text-sm text-blue-600 border border-blue-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!onPrev}
-          >
-            Previous
-          </button>
-          <button 
-            onClick={onNext}
-            className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md"
-          >
-            {onPrev ? "Next" : "Finish"}
-          </button>
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {/* Content */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">{title}</h3>
+          <p className="text-gray-600 mb-4">{content}</p>
+          
+          {/* Navigation buttons */}
+          <div className="flex justify-between items-center">
+            {onPrev && (
+              <button
+                onClick={onPrev}
+                className="flex items-center text-gray-600 hover:text-gray-800"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </button>
+            )}
+            <button
+              onClick={onNext}
+              className="flex items-center text-blue-600 hover:text-blue-800"
+            >
+              {onPrev ? 'Next' : 'Got it'}
+              {onPrev && <ChevronRight className="h-4 w-4 ml-1" />}
+            </button>
+          </div>
         </div>
       </div>
     </div>
