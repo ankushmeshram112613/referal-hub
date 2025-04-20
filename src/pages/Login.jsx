@@ -1,95 +1,105 @@
 import { useState } from 'react';
-import { Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const result = await api.login(formData.email, formData.password);
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      setError('Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
       <h1 className="text-2xl font-medium text-center text-gray-700 mb-8">Login to ReferralHub</h1>
       <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-8">
-        {/* Google/Microsoft Button */}
-        <button className="w-full border border-gray-300 rounded-md p-3 text-blue-600 font-medium hover:bg-gray-50 transition">
-          Continue with Google/Microsoft
-        </button>
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+            {error}
+          </div>
+        )}
         
-        {/* Magic Link Section */}
-        <div className="space-y-3">
-          <div className="text-gray-800 font-medium">Magic Link Login</div>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md p-3 transition">
-            Send Magic Link
-          </button>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className="text-gray-800 font-medium">Email</div>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="robert.fox@myemail.com"
+                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
+            
+            <div className="space-y-3">
+              <div className="text-gray-800 font-medium">Password</div>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  required
+                />
+                <button 
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md p-3 transition"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
+          </div>
+        </form>
         
         {/* Divider */}
-        <div className="flex items-center">
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <div className="px-4 text-sm text-gray-500">or</div>
-          <div className="flex-1 h-px bg-gray-300"></div>
-        </div>
-        
-        {/* Email/Password Login */}
-        <div className="space-y-4">
-          <div className="space-y-3">
-            <div className="text-gray-800 font-medium">Email</div>
-            <input
-              type="email"
-              placeholder="robert.fox@myemail.com"
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          
-          <div className="space-y-3">
-            <div className="text-gray-800 font-medium">Password</div>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter password"
-                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <button 
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                <Eye className="h-5 w-5 text-gray-400" />
-              </button>
-            </div>
-          </div>
-          
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700">
-                Remember Me
-              </label>
-            </div>
-            <a href="#" className="text-sm text-blue-600 hover:underline">
-              Forgot password?
-            </a>
-          </div>
-          
-          {/* Login Button */}
-          <button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md p-3 transition">
-            Login
-          </button>
-        </div>
-        
-        {/* Second Divider */}
         <div className="flex items-center">
           <div className="flex-1 h-px bg-gray-300"></div>
           <div className="px-4 text-sm text-gray-500">or</div>

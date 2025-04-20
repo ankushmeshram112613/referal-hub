@@ -1,0 +1,64 @@
+/* Existing progress circle animations */
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0, 100;
+  }
+  50% {
+    stroke-dasharray: 0, 100;
+  }
+  100% {
+    stroke-dasharray: var(--target-percentage), 100;
+  }
+}
+
+@keyframes number-counter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* New line chart animation */
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 2.5s ease-out forwards;
+}
+
+/* Existing styles */
+.progress-circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-circle-path {
+  stroke-linecap: round;
+  transition: stroke-dasharray 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-number {
+  animation: number-counter 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.animate-progress-circle {
+  animation: progress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+

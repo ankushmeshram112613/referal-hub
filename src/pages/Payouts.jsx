@@ -1,235 +1,208 @@
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Settings, 
-  User, 
-  Volume2, 
+  Bot, 
+  Layout, 
+  MessagesSquare, 
+  UserPlus, 
   Users, 
-  FileText, 
-  CreditCard, 
-  HelpCircle, 
-  Filter, 
+  CreditCard,
+  HelpCircle,
+  Filter,
+  Search,
   Eye,
-  Bell,
-  Coins,
-  ClipboardList
+  Download,
+  MessageSquare
 } from 'lucide-react';
+import { useState } from 'react';
+import DashboardLayout from '../components/DashboardLayout';
 
-export default function PayoutsDashboard() {
-  const [activeTab, setActiveTab] = useState('All Payouts');
-  const tabs = ['All Payouts', 'Disputes', 'Payout Settings'];
-  
+// Define statsCards array at the top level
+const statsCards = [
+  {
+    title: "Total Payouts",
+    value: "$12,345",
+    change: "+12%",
+    isPositive: true
+  },
+  {
+    title: "Pending Payouts",
+    value: "$3,456",
+    change: "+8%",
+    isPositive: true
+  },
+  {
+    title: "Processed Payouts",
+    value: "$8,889",
+    change: "-3%",
+    isPositive: false
+  }
+];
+
+export default function Payouts() {
+  const [showTour, setShowTour] = useState(false);
+  const [selectedPayouts, setSelectedPayouts] = useState([]);
+
   const payouts = [
-    { id: '#P-1048', promoter: 'Emery Dokidis', points: '500 pts', date: '28-4-2024', program: 'Spring Boost', status: 'Paid' },
-    { id: '#P-1047', promoter: 'Kadin Lipshutz', points: '250 pts', date: '27-5-2024', program: 'Summer Referral Program', status: 'Paid' },
-    { id: '#P-1046', promoter: 'Randy Culhane', points: '300 pts', date: '29-5-2024', program: 'Early Bird Special', status: 'Disputed' },
-    { id: '#P-1045', promoter: 'Jaxson Vaccaro', points: '100 pts', date: '30-6-2024', program: 'Early Bird Special', status: 'Paid' },
-    { id: '#P-1044', promoter: 'Jocelyn Levin', points: '200 pts', date: '01-7-2024', program: 'Summer Referral Program', status: 'Disputed' },
-    { id: '#P-1043', promoter: 'Maren Septimus', points: '300 pts', date: '03-7-2024', program: 'Summer Referral Program', status: 'Paid' },
-    { id: '#P-1042', promoter: 'Haylie Saris', points: '220 pts', date: '05-7-2024', program: 'Spring Boost', status: 'Paid' },
-    { id: '#P-1041', promoter: 'Randy Herwitz', points: '400 pts', date: '10-7-2024', program: 'Spring Boost', status: 'Disputed' }
+    { 
+      id: 1, 
+      promoter: "Emery Dokidis", 
+      amount: "$500", 
+      leads: 12, 
+      paymentMethod: "Bank Transfer",
+      status: "Pending",
+      date: "28-4-2024" 
+    },
+    { 
+      id: 2, 
+      promoter: "Kadin Lipshutz", 
+      amount: "$900", 
+      leads: 8, 
+      paymentMethod: "PayPal",
+      status: "Processed",
+      date: "27-5-2024" 
+    },
+    { 
+      id: 3, 
+      promoter: "Randy Culhane", 
+      amount: "$1000", 
+      leads: 15, 
+      paymentMethod: "Bank Transfer",
+      status: "Pending",
+      date: "29-5-2024" 
+    },
+    { 
+      id: 4, 
+      promoter: "Jaxson Vaccaro", 
+      amount: "$500", 
+      leads: 10, 
+      paymentMethod: "PayPal",
+      status: "Processed",
+      date: "30-6-2024" 
+    },
+    { 
+      id: 5, 
+      promoter: "Jocelyn Levin", 
+      amount: "$1,500", 
+      leads: 6, 
+      paymentMethod: "Bank Transfer",
+      status: "Disputed",
+      date: "01-7-2024" 
+    }
   ];
 
+  const toggleSelect = (id) => {
+    setSelectedPayouts(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'processed':
+        return 'bg-green-100 text-green-800';
+      case 'disputed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="w-56 bg-white border-r border-gray-200">
-        <div className="p-4 flex items-center space-x-2 text-blue-600">
-          <User className="w-5 h-5" />
-          <span className="font-semibold">AI Agent</span>
-        </div>
-        
-        <nav className="mt-6">
-          <div className="px-4 py-2 flex items-center space-x-3 text-blue-600">
-            <FileText className="w-5 h-5" />
-            <span>Dashboard</span>
-          </div>
-          
-          <div className="px-4 py-2 flex items-center space-x-3 text-blue-600">
-            <Volume2 className="w-5 h-5" />
-            <span>Campaign</span>
-          </div>
-          
-          <div className="px-4 py-2 flex items-center space-x-3 text-blue-600">
-            <Users className="w-5 h-5" />
-            <span>Promoters</span>
-          </div>
-          
-          <div className="px-4 py-2 flex items-center space-x-3 text-blue-600">
-            <User className="w-5 h-5" />
-            <span>Leads</span>
-          </div>
-          
-          <div className="px-4 py-2 flex items-center space-x-3 text-blue-600 bg-blue-50">
-            <CreditCard className="w-5 h-5" />
-            <span>Payouts</span>
-          </div>
-        </nav>
-        
-        <div className="mt-auto absolute bottom-0 w-56 border-t border-gray-200">
-          <div className="px-4 py-3 flex items-center space-x-3 text-blue-600">
-            <Settings className="w-5 h-5" />
-            <span>Settings</span>
-          </div>
-          
-          <div className="px-4 py-3 flex items-center space-x-3 text-blue-600">
-            <HelpCircle className="w-5 h-5" />
-            <span>Help</span>
-          </div>
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">Payouts</h1>
+        <div className="flex gap-3">
+          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+            Process Payouts
+          </button>
         </div>
       </div>
-      
-      {/* Main Content */}
-      <div className="flex-1">
-        {/* Header */}
-        <header className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Manage and monitor your payouts</h1>
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                <span className="text-xs text-red-500">1</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-300 rounded-full overflow-hidden">
-                <img src="/api/placeholder/32/32" alt="Profile" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <div className="text-sm font-medium">Kadin Stanton</div>
-                <div className="text-xs text-gray-500">kadinstanton@gmail.com</div>
-              </div>
-            </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {statsCards.map((card, index) => (
+          <div 
+            key={index}
+            className="animate-scale-in"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <StatsCard {...card} />
           </div>
-        </header>
-        
-        {/* Stats */}
-        <div className="p-6 grid grid-cols-3 gap-4">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <User className="w-6 h-6 text-gray-600" />
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Total Points Given</div>
-              <div className="text-2xl font-semibold">12,500</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-              <Coins className="w-6 h-6 text-red-400" />
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Current Point Balance</div>
-              <div className="text-2xl font-semibold">1,250</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-              <ClipboardList className="w-6 h-6 text-pink-400" />
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Last Points Transfer</div>
-              <div className="text-2xl font-semibold">April 9, 2025</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Tabs */}
-        <div className="px-6">
-          <div className="flex border-b border-gray-200 bg-gray-100 rounded-t-lg">
-            {tabs.map(tab => (
-              <button
-                key={tab}
-                className={`px-8 py-3 text-sm font-medium ${
-                  activeTab === tab 
-                    ? 'text-blue-600 border-b-2 border-blue-600 bg-white rounded-t-lg' 
-                    : 'text-gray-500'
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
+        ))}
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-lg border border-gray-200 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <table className="w-full">
+          <thead>
+            <tr className="text-left text-gray-500 text-sm border-b border-gray-200">
+              <th className="pl-4 py-3 w-10">
+                <input type="checkbox" className="rounded" />
+              </th>
+              <th className="py-3">Promoter</th>
+              <th className="py-3">Amount</th>
+              <th className="py-3">Leads</th>
+              <th className="py-3">Payment Method</th>
+              <th className="py-3">Status</th>
+              <th className="py-3">Date</th>
+              <th className="py-3 pr-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payouts.map((payout) => (
+              <tr key={payout.id} className="border-b border-gray-200 hover:bg-gray-50">
+                <td className="pl-4 py-3">
+                  <input 
+                    type="checkbox" 
+                    className="rounded"
+                    checked={selectedPayouts.includes(payout.id)}
+                    onChange={() => toggleSelect(payout.id)}
+                  />
+                </td>
+                <td className="py-3">{payout.promoter}</td>
+                <td className="py-3">{payout.amount}</td>
+                <td className="py-3">{payout.leads}</td>
+                <td className="py-3">{payout.paymentMethod}</td>
+                <td className="py-3">
+                  <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(payout.status)}`}>
+                    {payout.status}
+                  </span>
+                </td>
+                <td className="py-3">{payout.date}</td>
+                <td className="py-3 pr-4">
+                  <div className="flex gap-2">
+                    <button className="p-1 text-gray-500 hover:text-gray-700">
+                      <Eye size={16} />
+                    </button>
+                    <button className="p-1 text-gray-500 hover:text-gray-700">
+                      <MessageSquare size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
             ))}
-          </div>
-          
-          {/* Table Header */}
-          <div className="mt-6 flex justify-between items-center">
-            <h2 className="text-lg font-medium">All Payouts</h2>
-            <button className="px-4 py-2 border border-gray-300 rounded-md flex items-center space-x-2 bg-white">
-              <Filter className="w-4 h-4" />
-              <span>Filter</span>
-            </button>
-          </div>
-          
-          {/* Table */}
-          <div className="mt-4 bg-white rounded-md border border-gray-200 overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payout ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Promoter Name
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Points
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reward Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reward Earned For
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {payouts.map((payout) => (
-                  <tr key={payout.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {payout.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {payout.promoter}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {payout.points}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {payout.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {payout.program}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        payout.status === 'Paid' 
-                          ? 'bg-green-100 text-green-500' 
-                          : 'bg-orange-100 text-orange-500'
-                      }`}>
-                        {payout.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 flex items-center space-x-2">
-                      <button className="p-1 bg-gray-200 rounded-md">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <span className="text-blue-600">
-                        {payout.status === 'Disputed' ? 'Track Dispute' : 'Request Dispute'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function StatsCard({ title, value, change, isPositive }) {
+  return (
+    <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <h3 className="text-sm font-medium text-gray-500 mb-2">{title}</h3>
+      <div className="flex items-baseline">
+        <span className="text-2xl font-semibold text-gray-900">{value}</span>
+        <span className={`ml-2 text-sm ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+          {change}
+        </span>
       </div>
     </div>
   );

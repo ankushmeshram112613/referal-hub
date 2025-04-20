@@ -34,8 +34,10 @@ import {
   UploadCloud,  // Add this for the CustomerDataForm
   Plus,         // Add this for the CampaignSetupForm
 } from 'lucide-react';
+import { useUser } from '../context/UserContext';
 
 export default function PlatformSetup() {
+  const { user } = useUser();
   const [activeStep, setActiveStep] = useState('businessProfile');
   const [stepsStatus, setStepsStatus] = useState({
     'businessProfile': 'in-progress',
@@ -178,39 +180,45 @@ export default function PlatformSetup() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Left Sidebar */}
-      <div className="w-64 bg-slate-50 border-r border-slate-200 flex flex-col">
-        <div className="flex-1">
-          <Link to="/platformSetup">
-            <SidebarItem id="platform-setup" icon={<Settings className="w-5 h-5" />} label="Platform Setup" isActive={true} />
-          </Link>
-          <Link to="/aiagent">
-            <SidebarItem id="ai-agent" icon={<Bot className="w-5 h-5" />} label="AI Agent" />
-          </Link>
-          <Link to="/dashboard">
-            <SidebarItem id="dashboard" icon={<Layout className="w-5 h-5" />} label="Dashboard" />
-          </Link>
-          <Link to="/campaign">
-            <SidebarItem id="campaign" icon={<MessagesSquare className="w-5 h-5" />} label="Campaign" />
-          </Link>
-          <Link to="/promoters">
-            <SidebarItem id="promoters" icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
-          </Link>
-          <Link to="/leads">
-            <SidebarItem id="leads" icon={<Users className="w-5 h-5" />} label="Leads" />
-          </Link>
-          <Link to="/payouts">
-            <SidebarItem id="payouts" icon={<CreditCard className="w-5 h-5" />} label="Payouts" />
-          </Link>
+    <div className="flex gap-8 p-6">
+      {/* Left Side - Onboarding Steps */}
+      <div className="w-2/6 bg-[#F8F9FF] p-10 rounded-lg">
+        <div className="mb-6">
+          <h2 className="text-xl text-sm text-blue-600 mb-1.5">Get Started with ReferralHub</h2>
+          <p className="text-slate-600 text-sm">
+            To get started with better referrals & rewards, complete your account setup in a few easy steps.
+          </p>
         </div>
 
-        <div className="mt-auto border-t border-slate-200">
-          <Link to="/settings">
-            <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
-          </Link>
-          <SidebarItem icon={<HelpCircle className="w-5 h-5" />} label="Help" onClick={() => setShowTour(true)} />
+        <div className="h-px bg-slate-200 my-6"></div>
+
+        <div className="space-y-6 mt-12">
+          <OnboardingStep
+            title="Set Up Business Profile"
+            status={stepsStatus.businessProfile}
+            onClick={() => handleStepClick('businessProfile')}
+          />
+          <OnboardingStep
+            title="Sync Your Customer Data"
+            status={stepsStatus.customerData}
+            onClick={() => handleStepClick('customerData')}
+          />
+          <OnboardingStep
+            title="Set Up AI Agent Rules"
+            status={stepsStatus.aiAgentRules}
+            onClick={() => handleStepClick('aiAgentRules')}
+          />
+          <OnboardingStep
+            title="Set Up First Campaign"
+            status={stepsStatus.firstCampaign}
+            onClick={() => handleStepClick('firstCampaign')}
+          />
         </div>
+      </div>
+
+      {/* Right Side - Dynamic Form Content */}
+      <div className="w-full bg-white p-3 rounded-lg shadow-sm">
+        {renderStepContent()}
       </div>
 
       {/* Tour Popup */}
@@ -222,71 +230,6 @@ export default function PlatformSetup() {
           onClose={handleCloseTour}
         />
       )}
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col h-screen">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-slate-200">
-          <h1 className="text-xl font-semibold text-slate-800">Platform Setup</h1>
-          <div className="flex items-center gap-3">
-            <button className="text-blue-600">
-              <FileText className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-white text-xs">KS</div>
-              <div className="text-sm">
-                <div className="text-sm">Kadin Stanton</div>
-                <div className="text-slate-500 text-xs">kadinstanton@gmail.com</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 p-6 overflow-auto">
-          <div className="flex gap-8 h-full">
-            {/* Left Side - Onboarding Steps */}
-            <div className="w-2/6 bg-[#F8F9FF] p-10 rounded-lg h-full">
-              <div className="mb-6">
-                <h2 className="text-xl text-sm text-blue-600 mb-1.5">Get Started with ReferralHub</h2>
-                <p className="text-slate-600 text-sm">
-                  To get started with better referrals & rewards, complete your account setup in a few easy steps.
-                </p>
-              </div>
-
-              <div className="h-px bg-slate-200 my-6"></div>
-
-              <div className="space-y-6 mt-12">
-                <OnboardingStep
-                  title="Set Up Business Profile"
-                  status={stepsStatus.businessProfile}
-                  onClick={() => handleStepClick('businessProfile')}
-                />
-                <OnboardingStep
-                  title="Sync Your Customer Data"
-                  status={stepsStatus.customerData}
-                  onClick={() => handleStepClick('customerData')}
-                />
-                <OnboardingStep
-                  title="Set Up AI Agent Rules"
-                  status={stepsStatus.aiAgentRules}
-                  onClick={() => handleStepClick('aiAgentRules')}
-                />
-                <OnboardingStep
-                  title="Set Up First Campaign"
-                  status={stepsStatus.firstCampaign}
-                  onClick={() => handleStepClick('firstCampaign')}
-                />
-              </div>
-            </div>
-
-            {/* Right Side - Dynamic Form Content */}
-            <div className="w-full bg-white p-3 rounded-lg shadow-sm h-full overflow-y-auto">
-              {renderStepContent()}
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -650,7 +593,7 @@ function CampaignSetupForm({ onSubmit }) {
   const [leadsActionType, setLeadsActionType] = useState('SMS');
   return (
     <>
-      <div className="p-6 max-w-3xl">
+      <div className="p-6 max-w-3xl flex flex-col ">
         <h1 className="text-xl font-semibold text-gray-800">Create New Campaign</h1>
         <p className="text-gray-500 text-sm mb-6">Create a new referral campaign in just few steps.</p>
 
@@ -784,7 +727,7 @@ function CampaignSetupForm({ onSubmit }) {
                 ></textarea>
               </div>
 
-              <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
+              <button className="w-full text-white font-medium py-2 bg-gradient-to-r mt-2 rounded-lg from-blue-600 to-blue-200 flex items-center justify-center gap-1">
                 <Plus size={16} />
                 <span>Add Action</span>
               </button>
@@ -936,7 +879,7 @@ function CampaignSetupForm({ onSubmit }) {
                 ></textarea>
               </div>
 
-              <button className="w-full bg-blue-500 text-white rounded-md py-2 flex items-center justify-center gap-1">
+              <button className="w-full text-white font-medium  bg-gradient-to-r mt-2 from-blue-600 to-blue-200 rounded-md py-2 flex items-center justify-center gap-1">
                 <Plus size={16} />
                 <span>Add Action</span>
               </button>
@@ -945,7 +888,7 @@ function CampaignSetupForm({ onSubmit }) {
         </div>
 
         {/* Launch Button */}
-        <button onClick={onSubmit} className="w-full bg-blue-500 text-white rounded-md py-3 font-medium">
+        <button onClick={onSubmit} className=" w-[100%] rounded-lg flex justify-center items-center text-white font-medium py-2 bg-gradient-to-r mt-2 from-blue-600 to-blue-200">
           Launch
         </button>
       </div>
@@ -994,7 +937,7 @@ function TourPopup({ step, onNext, onPrev, onClose }) {
         >
           {/* Clone the content of the target element */}
           {document.getElementById(target)?.innerHTML && (
-            <div dangerouslySetInnerHTML={{ __html: document.getElementById(target).innerHTML }} />
+            <div className='flex gap-3' dangerouslySetInnerHTML={{ __html: document.getElementById(target).innerHTML }} />
           )}
         </div>
       )}
@@ -1034,7 +977,8 @@ function TourPopup({ step, onNext, onPrev, onClose }) {
             )}
             <button
               onClick={onNext}
-              className="flex items-center text-blue-600 hover:text-blue-800"
+              className="w-[50%] h-[15%] text-white font-medium py-2 bg-gradient-to-r mt-2 from-blue-600 to-blue-200 flex justify-center items-center rounded-lg"
+
             >
               {onPrev ? 'Next' : 'Got it'}
               {onPrev && <ChevronRight className="h-4 w-4 ml-1" />}
@@ -1045,3 +989,22 @@ function TourPopup({ step, onNext, onPrev, onClose }) {
     </div>
   );
 }
+
+// If using React-Joyride, add these options to your tour configuration
+const tourOptions = {
+  overlayColor: 'rgba(0, 0, 0, 0.5)',
+  spotlightPadding: 0,
+  styles: {
+    options: {
+      zIndex: 10000,
+      overlayColor: 'rgba(0, 0, 0, 0.5)',
+      spotlightPadding: 0
+    },
+    tooltip: {
+      zIndex: 10001
+    },
+    spotlight: {
+      zIndex: 10002
+    }
+  }
+};
