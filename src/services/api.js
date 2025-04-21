@@ -1,39 +1,37 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
-console.log('API URL:', API_URL);
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
 });
 
-// Request interceptor
-axiosInstance.interceptors.request.use(
-  config => {
-    console.log('Request Config:', config);
-    return config;
-  },
-  error => {
-    console.error('Request Error:', error);
-    return Promise.reject(error);
-  }
-);
+// Add retry logic
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
 
-// Response interceptor
+const retryRequest = async (config, retryCount = 0) => {
+  try {
+    return await axios(config);
+  } catch (error) {
+    if (retryCount < MAX_RETRIES && (error.code === 'ERR_NETWORK' || error.response?.status === 429)) {
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
+      return retryRequest(config, retryCount + 1);
+    }
+    throw error;
+  }
+};
+
 axiosInstance.interceptors.response.use(
-  response => {
-    console.log('Response:', response);
-    return response;
-  },
-  error => {
-    console.error('Response Error:', error);
-    if (error.response) {
-      console.error('Error Data:', error.response.data);
-      console.error('Error Status:', error.response.status);
+  response => response,
+  async error => {
+    if (error.config && !error.config._retry) {
+      error.config._retry = true;
+      return retryRequest(error.config);
     }
     return Promise.reject(error);
   }
@@ -62,20 +60,18 @@ export const api = {
   // Register user
   async register(userData) {
     try {
-      // Check if user already exists
-      const existingUser = await axiosInstance.get(`/users?email=${userData.email}`);
+      // Check if user exists
+      const checkResponse = await axiosInstance.get(`/users?email=${userData.email}`);
       
-      if (existingUser.data.length > 0) {
+      if (checkResponse.data.length > 0) {
         return { success: false, message: 'Email already registered' };
       }
 
-      // Add additional user data
       const newUser = {
         ...userData,
         createdAt: new Date().toISOString()
       };
 
-      // Create new user
       const response = await axiosInstance.post('/users', newUser);
       
       const { password, ...userWithoutPassword } = response.data;
@@ -84,7 +80,10 @@ export const api = {
       return { success: true, user: userWithoutPassword };
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, message: 'Registration failed. Please check your connection.' };
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Registration failed. Please try again.'
+      };
     }
   },
 
@@ -164,6 +163,7 @@ export const api = {
     }
   }
 };
+
 
 
 
