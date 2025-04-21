@@ -1,19 +1,28 @@
 import axios from 'axios';
 
+// Log the API URL to debug
+console.log('API URL:', import.meta.env.VITE_API_URL);
+
 const API_URL = import.meta.env.VITE_API_URL;
 
-// When running locally, API_URL will be "http://localhost:3001"
-// When running on Netlify, API_URL will be "https://your-api-name.onrender.com"
+// Add base URL and default headers
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    // Add CORS headers
+    'Access-Control-Allow-Origin': '*'
+  }
+});
 
 export const api = {
   // Login user
   async login(email, password) {
     try {
-      const response = await axios.get(`${API_URL}/users?email=${email}`);
+      const response = await axiosInstance.get(`/users?email=${email}`);
       const user = response.data[0];
       
       if (user && user.password === password) {
-        // Remove password before storing in localStorage
         const { password, ...userWithoutPassword } = user;
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         return { success: true, user: userWithoutPassword };
@@ -21,6 +30,7 @@ export const api = {
       
       return { success: false, message: 'Invalid credentials' };
     } catch (error) {
+      console.error('Login error:', error);
       return { success: false, message: 'Login failed' };
     }
   },
@@ -29,7 +39,7 @@ export const api = {
   async register(userData) {
     try {
       // Check if user already exists
-      const existingUser = await axios.get(`${API_URL}/users?email=${userData.email}`);
+      const existingUser = await axiosInstance.get(`/users?email=${userData.email}`);
       
       if (existingUser.data.length > 0) {
         return { success: false, message: 'Email already registered' };
@@ -42,14 +52,14 @@ export const api = {
       };
 
       // Create new user
-      const response = await axios.post(`${API_URL}/users`, newUser);
+      const response = await axiosInstance.post('/users', newUser);
       
-      // Remove password before storing in localStorage
       const { password, ...userWithoutPassword } = response.data;
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       
       return { success: true, user: userWithoutPassword };
     } catch (error) {
+      console.error('Registration error:', error);
       return { success: false, message: 'Registration failed' };
     }
   },
@@ -65,7 +75,7 @@ export const api = {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user) throw new Error('No user found');
 
-      const response = await axios.get(`${API_URL}/users/${user.id}`);
+      const response = await axiosInstance.get(`/users/${user.id}`);
       return { success: true, user: response.data };
     } catch (error) {
       return { success: false, message: 'Failed to fetch user profile' };
@@ -78,7 +88,7 @@ export const api = {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user) throw new Error('No user found');
 
-      const response = await axios.patch(`${API_URL}/users/${user.id}`, userData);
+      const response = await axiosInstance.patch(`/users/${user.id}`, userData);
       
       // Update local storage
       const updatedUser = response.data;
@@ -96,8 +106,8 @@ export const api = {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user) throw new Error('No user found');
 
-      const response = await axios.post(
-        `${API_URL}/users/${user.id}/avatar`,
+      const response = await axiosInstance.post(
+        `/users/${user.id}/avatar`,
         formData,
         {
           headers: {
@@ -122,7 +132,7 @@ export const api = {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user) throw new Error('No user found');
 
-      await axios.delete(`${API_URL}/users/${user.id}/avatar`);
+      await axiosInstance.delete(`/users/${user.id}/avatar`);
       return { success: true };
     } catch (error) {
       console.error('Error removing profile photo:', error);
@@ -130,6 +140,8 @@ export const api = {
     }
   }
 };
+
+
 
 
 
