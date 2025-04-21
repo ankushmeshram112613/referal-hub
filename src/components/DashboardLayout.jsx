@@ -1,10 +1,30 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Settings, Bot, Layout, MessagesSquare, UserPlus, Users, CreditCard, HelpCircle, FileText } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import UserProfile from './UserProfile';
 
 export default function DashboardLayout({ children }) {
   const { user } = useUser();
+  const location = useLocation();
+
+  // Function to get page name from path
+  const getPageName = (path) => {
+    const pathMap = {
+      '/dashboard': 'Dashboard',
+      '/platformSetup': 'Platform Setup',
+      '/aiagent': 'AI Agent',
+      '/campaign': 'Campaign',
+      '/campaign/create': 'Create Campaign',
+      '/campaign/active': 'Active Campaigns',
+      '/campaign/archived': 'Archived Campaigns',
+      '/promoters': 'Promoters',
+      '/leads': 'Leads',
+      '/settings': 'Settings',
+      '/payouts': 'Payouts'
+    };
+
+    return pathMap[path] || 'Dashboard';
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -55,7 +75,7 @@ export default function DashboardLayout({ children }) {
         <div className="h-[88px] border-b border-slate-200 bg-white fixed right-0 left-64 z-10">
           <div className="flex justify-between items-center px-6 h-full">
             <h1 className="text-xl font-semibold text-slate-800">
-              {/* Dynamic title based on route */}
+              {getPageName(location.pathname)}
             </h1>
             <div className="flex items-center gap-3">
               <button className="text-blue-600">
@@ -89,6 +109,7 @@ function SidebarItem({ icon, label, isActive = false, id }) {
     </div>
   );
 }
+
 
 
 

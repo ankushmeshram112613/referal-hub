@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Settings, 
   Bot, 
@@ -16,15 +16,21 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const SidebarItem = ({ icon, label, isActive, onClick, children }) => {
+const SidebarItem = ({ icon, label, isActive, onClick, children, to }) => {
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = children && children.length > 0;
+  const location = useLocation();
+  
+  // Check if this item or any of its children are active
+  const isCurrentActive = to === location.pathname || 
+    (children?.some(child => child.props.to === location.pathname));
 
   return (
     <div>
       <div
         className={`flex items-center space-x-3 px-4 py-3 cursor-pointer
-          ${isActive ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}
+          ${isCurrentActive ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100'}
+          transition-colors duration-200
         `}
         onClick={() => {
           if (hasChildren) {
@@ -35,7 +41,7 @@ const SidebarItem = ({ icon, label, isActive, onClick, children }) => {
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-3">
-            {icon}
+            {icon && <div className={isCurrentActive ? 'text-blue-600' : 'text-slate-600'}>{icon}</div>}
             <span className="text-sm font-medium">{label}</span>
           </div>
           {hasChildren && (
@@ -55,6 +61,8 @@ const SidebarItem = ({ icon, label, isActive, onClick, children }) => {
 };
 
 export default function Sidebar({ setShowTour, setTourStep }) {
+  const location = useLocation();
+
   useEffect(() => {
     setShowTour(true);
     setTourStep(0);
@@ -68,79 +76,123 @@ export default function Sidebar({ setShowTour, setTourStep }) {
 
       <div className="flex-1 overflow-y-auto">
         <div className="py-2">
-          <Link to="/platformSetup" className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <SidebarItem icon={<Settings className="w-5 h-5" />} label="Platform Setup" />
+          <Link to="/platformSetup">
+            <SidebarItem 
+              icon={<Settings className="w-5 h-5" />} 
+              label="Platform Setup" 
+              to="/platformSetup"
+            />
           </Link>
-          <Link to="/aiagent" className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-            <SidebarItem icon={<Bot className="w-5 h-5" />} label="AI Agent" />
+          <Link to="/aiagent">
+            <SidebarItem 
+              icon={<Bot className="w-5 h-5" />} 
+              label="AI Agent" 
+              to="/aiagent"
+            />
           </Link>
-          <Link to="/dashboard" className="animate-fade-in" style={{ animationDelay: '300ms' }}>
-            <SidebarItem icon={<Layout className="w-5 h-5" />} label="Dashboard" />
+          <Link to="/dashboard">
+            <SidebarItem 
+              icon={<Layout className="w-5 h-5" />} 
+              label="Dashboard" 
+              to="/dashboard"
+            />
           </Link>
           
-          <SidebarItem icon={<MessagesSquare className="w-5 h-5" />} label="Campaign Management">
+          <SidebarItem 
+            icon={<MessagesSquare className="w-5 h-5" />} 
+            label="Campaign Management"
+            to="/campaign"
+          >
             <Link to="/campaign/create">
-              <SidebarItem label="Create Campaign" />
+              <SidebarItem label="Create Campaign" to="/campaign/create" />
             </Link>
             <Link to="/campaign/active">
-              <SidebarItem label="Active Campaigns" />
+              <SidebarItem label="Active Campaigns" to="/campaign/active" />
             </Link>
             <Link to="/campaign/archived">
-              <SidebarItem label="Archived" />
+              <SidebarItem label="Archived" to="/campaign/archived" />
             </Link>
           </SidebarItem>
 
-          <Link to="/promoters" className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-            <SidebarItem icon={<UserPlus className="w-5 h-5" />} label="Promoters" />
+          <Link to="/promoters">
+            <SidebarItem 
+              icon={<UserPlus className="w-5 h-5" />} 
+              label="Promoters" 
+              to="/promoters"
+            />
           </Link>
-          <Link to="/leads" className="animate-fade-in" style={{ animationDelay: '500ms' }}>
-            <SidebarItem icon={<Users className="w-5 h-5" />} label="Leads" />
+          <Link to="/leads">
+            <SidebarItem 
+              icon={<Users className="w-5 h-5" />} 
+              label="Leads" 
+              to="/leads"
+            />
           </Link>
           
-          <SidebarItem icon={<CreditCard className="w-5 h-5" />} label="Payouts" isActive={true}>
+          <SidebarItem 
+            icon={<CreditCard className="w-5 h-5" />} 
+            label="Payouts" 
+            to="/payouts"
+          >
             <Link to="/payouts/pending">
-              <SidebarItem label="Pending Payouts" />
+              <SidebarItem label="Pending Payouts" to="/payouts/pending" />
             </Link>
             <Link to="/payouts/processed">
-              <SidebarItem label="Processed" />
+              <SidebarItem label="Processed" to="/payouts/processed" />
             </Link>
             <Link to="/payouts/disputes">
-              <SidebarItem label="Disputes" />
+              <SidebarItem label="Disputes" to="/payouts/disputes" />
             </Link>
           </SidebarItem>
 
-          <SidebarItem icon={<Bell className="w-5 h-5" />} label="Notifications">
+          <SidebarItem 
+            icon={<Bell className="w-5 h-5" />} 
+            label="Notifications"
+            to="/notifications"
+          >
             <Link to="/notifications/alerts">
-              <SidebarItem label="Alerts" />
+              <SidebarItem label="Alerts" to="/notifications/alerts" />
             </Link>
             <Link to="/notifications/updates">
-              <SidebarItem label="Updates" />
+              <SidebarItem label="Updates" to="/notifications/updates" />
             </Link>
           </SidebarItem>
 
-          <SidebarItem icon={<Coins className="w-5 h-5" />} label="Points Management">
+          <SidebarItem 
+            icon={<Coins className="w-5 h-5" />} 
+            label="Points Management"
+            to="/points"
+          >
             <Link to="/points/allocation">
-              <SidebarItem label="Point Allocation" />
+              <SidebarItem label="Point Allocation" to="/points/allocation" />
             </Link>
             <Link to="/points/history">
-              <SidebarItem label="History" />
+              <SidebarItem label="History" to="/points/history" />
             </Link>
           </SidebarItem>
 
-          <SidebarItem icon={<ClipboardList className="w-5 h-5" />} label="Reports">
+          <SidebarItem 
+            icon={<ClipboardList className="w-5 h-5" />} 
+            label="Reports"
+            to="/reports"
+          >
             <Link to="/reports/performance">
-              <SidebarItem label="Performance" />
+              <SidebarItem label="Performance" to="/reports/performance" />
             </Link>
             <Link to="/reports/analytics">
-              <SidebarItem label="Analytics" />
+              <SidebarItem label="Analytics" to="/reports/analytics" />
             </Link>
           </SidebarItem>
         </div>
       </div>
 
-      <div className="mt-auto border-t border-slate-200 animate-fade-in" style={{ animationDelay: '300ms' }}>
+      <div className="mt-auto border-t border-slate-200">
         <Link to="/settings">
-          <SidebarItem icon={<Settings className="w-5 h-5" />} label="Settings" />
+          <SidebarItem 
+            icon={<Settings className="w-5 h-5" />} 
+            label="Settings" 
+            to="/settings"
+          />
         </Link>
         <SidebarItem 
           icon={<HelpCircle className="w-5 h-5" />} 
@@ -151,6 +203,7 @@ export default function Sidebar({ setShowTour, setTourStep }) {
     </div>
   );
 }
+
 
 
 
