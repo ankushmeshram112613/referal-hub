@@ -4,7 +4,7 @@ import { UserProvider } from './context/UserContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import PlatformSetup from './pages/PlatformSetup'
+import PlatformSetUp from './pages/PlatformSetUp'
 import AI_Agent from './pages/AI_Agent'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
@@ -23,7 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route element={<DashboardLayout />}>
-            <Route path="/platformSetup" element={<PlatformSetup />} />
+            <Route path="/platformSetup" element={<PlatformSetUp />} />
             <Route path="/aiagent" element={<AI_Agent />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/campaign" element={<Campaign />} />

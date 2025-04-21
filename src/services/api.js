@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL;
+
+// When running locally, API_URL will be "http://localhost:3001"
+// When running on Netlify, API_URL will be "https://your-api-name.onrender.com"
 
 export const api = {
   // Login user
@@ -127,4 +130,7 @@ export const api = {
     }
   }
 };
+
+
+
 
