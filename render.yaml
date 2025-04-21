@@ -7,8 +7,11 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 18.19.0
-      - key: CORS_ORIGIN
-        value: https://ankushbuisnessprojectforhackathon.netlify.app
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
     runtime: node
     nodeVersion: 18.19.0
+
 

@@ -1,8 +1,14 @@
 {
-  "users": [],
+  "users": [
+    {
+      "email": "112613ankufsh@gmail.com",
+      "password": "11",
+      "createdAt": "2025-04-21T03:14:58.498Z",
+      "id": 1
+    }
+  ],
   "campaigns": [],
   "leads": [],
   "payouts": [],
   "promoters": []
 }
-

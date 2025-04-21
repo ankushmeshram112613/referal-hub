@@ -1,19 +1,43 @@
 import axios from 'axios';
 
-// Log the API URL to debug
-console.log('API URL:', import.meta.env.VITE_API_URL);
-
 const API_URL = import.meta.env.VITE_API_URL;
+console.log('API URL:', API_URL);
 
-// Add base URL and default headers
 const axiosInstance = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
-    // Add CORS headers
-    'Access-Control-Allow-Origin': '*'
+    'Content-Type': 'application/json'
   }
 });
+
+// Request interceptor
+axiosInstance.interceptors.request.use(
+  config => {
+    console.log('Request Config:', config);
+    return config;
+  },
+  error => {
+    console.error('Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor
+axiosInstance.interceptors.response.use(
+  response => {
+    console.log('Response:', response);
+    return response;
+  },
+  error => {
+    console.error('Response Error:', error);
+    if (error.response) {
+      console.error('Error Data:', error.response.data);
+      console.error('Error Status:', error.response.status);
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const api = {
   // Login user
@@ -31,7 +55,7 @@ export const api = {
       return { success: false, message: 'Invalid credentials' };
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, message: 'Login failed' };
+      return { success: false, message: 'Login failed. Please check your connection.' };
     }
   },
 
@@ -60,7 +84,7 @@ export const api = {
       return { success: true, user: userWithoutPassword };
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, message: 'Registration failed' };
+      return { success: false, message: 'Registration failed. Please check your connection.' };
     }
   },
 
@@ -140,6 +164,10 @@ export const api = {
     }
   }
 };
+
+
+
+
 
 
 
