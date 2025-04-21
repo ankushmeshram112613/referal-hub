@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: referal-hub-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.19.0
