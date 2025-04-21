@@ -1,43 +1,60 @@
-import express from 'express';
 import jsonServer from 'json-server';
-import path from 'path';
+import cors from 'cors';
 import { fileURLToPath } from 'url';
-import { corsMiddleware } from './src/middleware/cors.js';
+import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const server = express();
-const jsonServerRouter = jsonServer.router(path.join(__dirname, 'db.json'));
-const middlewares = jsonServer.defaults();
+const server = jsonServer.create();
+const router = jsonServer.router(join(__dirname, 'db.json'));
+const middlewares = jsonServer.defaults({ noCors: true }); // Disable default CORS
 
-// Apply CORS middleware before any other middleware
-server.use(corsMiddleware);
+// Use CORS middleware with specific configuration
+server.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Apply json-server middlewares
 server.use(middlewares);
-server.use(express.json());
+server.use(jsonServer.bodyParser);
 
-// Add custom routes before json-server router
+// Custom response for /users endpoint
+server.get('/users', (req, res) => {
+  const { email } = req.query;
+  const users = router.db.get('users').value();
+  const user = users.find(u => u.email === email);
+  
+  if (!user) {
+    return res.json([]);
+  }
+  
+  res.json([user]);
+});
+
+// Custom route for user registration
 server.post('/users', (req, res, next) => {
-  req.body.createdAt = new Date().toISOString();
+  const { email } = req.body;
+  const users = router.db.get('users').value();
+  const existingUser = users.find(u => u.email === email);
+  
+  if (existingUser) {
+    return res.status(400).json({
+      success: false,
+      message: 'User already exists'
+    });
+  }
+  
   next();
 });
 
-// Error handling
-server.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: err.message
-  });
-});
-
-// Mount json-server router
-server.use(jsonServerRouter);
+// Use router after custom routes
+server.use(router);
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`JSON Server is running on http://localhost:${PORT}`);
 });
 

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../services/api';
 
 export default function RegistrationForm() {
   const navigate = useNavigate();
@@ -34,22 +33,12 @@ export default function RegistrationForm() {
 
     setIsLoading(true);
 
-    try {
-      const result = await api.register({
-        email: formData.email,
-        password: formData.password
-      });
-
-      if (result.success) {
-        navigate('/dashboard');
-      } else {
-        setError(result.message);
-      }
-    } catch (error) {
-      setError('Registration failed. Please try again.');
-    } finally {
+    // Simulate API call delay
+    setTimeout(() => {
+      // Simulate successful registration
+      navigate('/dashboard');
       setIsLoading(false);
-    }
+    }, 800);
   };
 
   return (

@@ -114,36 +114,57 @@ export default function Campaign() {
           {/* Conversion Rate Chart */}
           <div className="bg-white p-4 rounded shadow animate-slide-up">
             <h2 className="text-lg font-medium mb-4">Conversion Success Rate</h2>
-            <div className="h-[250px] sm:h-[300px] lg:h-[400px] flex items-center justify-center">
-              <div className="w-full sm:w-2/3">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieChartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={10}
-                      dataKey="value"
-                    >
-                      {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex flex-col items-center mt-4">
-                  <div className="flex items-center mb-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                    <span className="text-sm text-gray-600">Referrals sent 57%</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full bg-blue-100 mr-2"></div>
-                    <span className="text-sm text-gray-600">Converted 42%</span>
-                  </div>
-                </div>
-              </div>
+            <div className="h-[250px] sm:h-[300px] lg:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={[
+                    { month: 'Jan', conversion: 35 },
+                    { month: 'Feb', conversion: 38 },
+                    { month: 'Mar', conversion: 42 },
+                    { month: 'Apr', conversion: 40 },
+                    { month: 'May', conversion: 45 },
+                    { month: 'Jun', conversion: 42 },
+                    { month: 'Jul', conversion: 48 },
+                    { month: 'Aug', conversion: 50 },
+                    { month: 'Sep', conversion: 47 },
+                    { month: 'Oct', conversion: 45 },
+                    { month: 'Nov', conversion: 42 },
+                    { month: 'Dec', conversion: 44 }
+                  ]}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis 
+                    dataKey="month" 
+                    axisLine={false} 
+                    tickLine={false}
+                    tick={{ fill: '#6B7280', fontSize: 12 }}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false}
+                    tick={{ fill: '#6B7280', fontSize: 12 }}
+                    domain={[0, 100]}
+                    ticks={[0, 25, 50, 75, 100]}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '6px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="conversion"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6, fill: '#6366F1' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>

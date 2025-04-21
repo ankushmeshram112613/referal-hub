@@ -1,7 +1,17 @@
 {
-  "users": [],
-  "campaigns": [],
-  "leads": [],
-  "promoters": [],
-  "payouts": []
+  "users": [
+    {
+      "id": 1,
+      "email": "demo@example.com",
+      "password": "demo123",
+      "fullName": "Demo User",
+      "createdAt": "2024-02-20T10:00:00.000Z"
+    },
+    {
+      "email": "112613ankush@gmail.com",
+      "password": "11",
+      "createdAt": "2025-04-21T05:55:18.778Z",
+      "id": 2
+    }
+  ]
 }

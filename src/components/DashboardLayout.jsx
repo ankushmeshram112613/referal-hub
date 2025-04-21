@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Settings, Bot, Layout, MessagesSquare, UserPlus, Users, CreditCard, HelpCircle, FileText } from 'lucide-react';
 import { useUser } from '../context/UserContext';
+import UserProfile from './UserProfile';
 
 export default function DashboardLayout({ children }) {
   const { user } = useUser();
@@ -58,17 +59,9 @@ export default function DashboardLayout({ children }) {
             </h1>
             <div className="flex items-center gap-3">
               <button className="text-blue-600">
-                <FileText className="w-5 h-5" />
+                {/* <FileText className="w-5 h-5" /> */}
               </button>
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-white text-xs">
-                  {user?.fullName?.split(' ').map(name => name[0]).join('')}
-                </div>
-                <div className="text-sm">
-                  <div className="text-sm">{user?.fullName}</div>
-                  <div className="text-slate-500 text-xs">{user?.email}</div>
-                </div>
-              </div>
+              <UserProfile />
             </div>
           </div>
         </div>
@@ -96,5 +89,7 @@ function SidebarItem({ icon, label, isActive = false, id }) {
     </div>
   );
 }
+
+
 
 

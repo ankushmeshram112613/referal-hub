@@ -1,30 +1,24 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const UserContext = createContext();
 
-export function UserProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Static user data
+const DEMO_USER = {
+  id: 1,
+  email: "demo@example.com",
+  fullName: "Demo User",
+  createdAt: "2024-02-20T10:00:00.000Z"
+};
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
+export function UserProvider({ children }) {
+  const [user, setUser] = useState(DEMO_USER);
 
   const updateUser = (userData) => {
     setUser(userData);
-    if (userData) {
-      localStorage.setItem('user', JSON.stringify(userData));
-    } else {
-      localStorage.removeItem('user');
-    }
   };
 
   return (
-    <UserContext.Provider value={{ user, updateUser, loading }}>
+    <UserContext.Provider value={{ user, updateUser, loading: false }}>
       {children}
     </UserContext.Provider>
   );

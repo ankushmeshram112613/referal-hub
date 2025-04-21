@@ -12,7 +12,7 @@ import {
   Save
 } from 'lucide-react';
 import { useUser } from '../context/UserContext';
-import api from '../services/api';
+import { api } from '../services/api';  // Changed from default import to named import
 import UserProfile from '../components/UserProfile';
 // import DashboardLayout from '../components/DashboardLayout';
 
